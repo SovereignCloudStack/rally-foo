@@ -1,0 +1,56 @@
+{%- set floating_network = floating_network|default("public") %}
+{%- set image_name = image_name|default("^(cirros.*-disk|TestVM)$") %}
+{%- set flavor_name = flavor_name|default("m1.tiny") %}
+
+{%- set availability_zone = availability_zone|default("default") %}
+
+{%- set enable_auth = enable_auth|default(true) %}
+{%- set enable_nova = enable_nova|default(true) %}
+{%- set enable_glance = enable_glance|default(true) %}
+{%- set enable_cinder = enable_cinder|default(true) %}
+{%- set enable_neutron = enable_neutron|default(true) %}
+
+{%- set load = load|default(1) %}
+
+{%- set enable_admin = enable_admin|default(false) %}
+
+---
+  version: 2
+  title: "Test various Actions on OpenStack"
+  description: |
+     Use this task to test various aspects of your OpenStack environment.
+  subtasks:
+    - 
+     title: "create and show router"
+     scenario:
+       NeutronNetworks.create_and_show_routers:
+           subnet_cidr_start: "1.1.0.0/30"
+           subnets_per_network: 2
+     runner:
+        constant:
+          times: {{ load }}
+          concurrency: {{ load }}
+     contexts: {}
+    -
+      title: "Test performance of key VM operations"
+      scenario:
+        NovaServers.boot_and_bounce_server:
+          flavor:
+            name: "{{flavor_name}}"
+          image:
+            name: "{{image_name}}"
+          availability_zone: "{{availability_zone}}"
+          force_delete: false
+          actions:
+            -
+              hard_reboot: 1
+            -
+              soft_reboot: 1
+            -
+              stop_start: 1
+            -
+              rescue_unrescue: 1
+      runner:
+        constant:
+          times: {{ load }}
+          concurrency: {{ load }}

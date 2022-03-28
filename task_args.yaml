@@ -1,0 +1,4 @@
+---
+flavor_name: SCS-1V:1:10
+image_name: "Cirros 0.5.2"
+availability_zone: nova
