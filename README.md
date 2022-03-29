@@ -1,14 +1,14 @@
 # rally playground
 
 This is a playground for fiddling with rally. Idea is to replace the
-OpenStack health monitor with rally tasks. Let’s see if this will work
+OpenStack health monitor with rally tasks. Let's see if this will work
 out. ;)
 
 ## getting started
 
 First get the docker container up and running:
 
-```bash
+``` bash
 $ docker pull xrally/xrally-openstack
 ```
 
@@ -38,7 +38,7 @@ credentials via json:
 
 change your working directory to this git repo & enter the container interactively:
 
-```bash
+``` bash
 $ cd rally-foo
 
 $ docker run --rm --name openstack-rally -ti --entrypoint /usr/bin/bash \
@@ -102,7 +102,7 @@ Available services:
 
 *Summary*
 
--   Opendev and Github repo are mirros of each other. Same number of
+-   Opendev and Github repo are mirrors of each other. Same number of
     commits.
 -   Xrally are built containers based on the Dockerfile in rally
     projects.
