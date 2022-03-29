@@ -1,0 +1,25 @@
+# Source: https://github.com/SovereignCloudStack/openstack-health-monitor/blob/master/api_monitor.sh
+
+# - create router (VPC)
+# - create 1+$NONETS (1+2) nets -- $NONETS is normally the # of AZs
+# - create 1+$NONETS subnets
+# - create security groups
+# - create virtual IP (for outbound SNAT via JumpHosts)
+# - create SSH keys
+# - create $NOAZS JumpHost VMs by
+#   a) creating disks (from image)
+#   b) creating ports
+#   c) creating VMs
+# - associating a floating IP to each Jumphost
+# - configuring the virtIP as default route
+# - JumpHosts do SNAT for outbound traffic and port forwarding for inbound
+#   (this used to require SUSE images with SFW2-snat package to work, but now
+#    should work on most images, assuming iptables rules can be configured)
+# - create N internal VMs striped over the nets and AZs by
+#   a) creating disks (from image) -- if option -d is not used
+#   b) creating a port -- if option -P is not used
+#   c) creating VM (from volume or from image, dep. on -d)
+#   (Steps a and c take long, so we do many in parallel and poll for progress)
+#   d) do some property changes to VMs
+# - after everything is complete, we wait for the VMs to be up
+# - we ping them, log in via ssh and see whether they can ping to the outside world (dns.google)

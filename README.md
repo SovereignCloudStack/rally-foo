@@ -98,6 +98,12 @@ Available services:
 +-------------+-----------------+-----------+
 ```
 
+## running tasks
+
+``` bash
+$ rally task start --task-args-file ~/rally-foo/task_args.yaml ~/rally-foo/task.yaml
+```
+
 ## rally vs openstack-rally vs xrally vs xrally-openstack
 
 *Summary*
