@@ -8,11 +8,11 @@ out. ;)
 
 First get the docker container up and running:
 
-    # docker pull xrally/xrally-openstack
+```bash
+$ docker pull xrally/xrally-openstack
+```
 
-    # docker run --rm --name openstack-rally -ti --entrypoint /usr/bin/bash -v rally_volume:/home/rally/.rally xrally/xrally-openstack
-
-Next point rally at the existing openstack deployment. Prepare your
+Next point rally at the existing OpenStack deployment. Prepare your
 credentials via json:
 
 ``` json
@@ -34,6 +34,18 @@ credentials via json:
         "https_cacert": ""
     }
 }
+```
+
+change your working directory to this git repo & enter the container interactively:
+
+```bash
+$ cd rally-foo
+
+$ docker run --rm --name openstack-rally -ti --entrypoint /usr/bin/bash \
+     -v `pwd`:/home/rally/rally-foo \
+     -v rally_volume:/home/rally/.rally \
+     -w /home/rally/rally-foo \
+        xrally/xrally-openstack
 ```
 
 Import json into rally:
