@@ -1,43 +1,64 @@
 # rally playground
 
-This is a playground for fiddling with rally. 
-Idea is to replace the OpenStack health monitor with rally tasks. Let's see if this will work out. ;)
+This is a playground for fiddling with rally. Idea is to replace the
+OpenStack health monitor with rally tasks. Let’s see if this will work
+out. ;)
 
 ## getting started
 
 First get the docker container up and running:
 
-```
-# docker pull xrally/xrally-openstack
+    # docker pull xrally/xrally-openstack
 
-# docker run --rm --name openstack-rally -ti --entrypoint /usr/bin/bash -v rally_volume:/home/rally/.rally xrally/xrally-openstack
+    # docker run --rm --name openstack-rally -ti --entrypoint /usr/bin/bash -v rally_volume:/home/rally/.rally xrally/xrally-openstack
+
+Next point rally at the existing openstack deployment. Prepare your
+credentials via json:
+
+``` json
+{
+    "openstack": {
+        "auth_url": "https://api.gx-scs.sovereignit.cloud:5000/v3/",
+        "region_name": "RegionOne",
+        "endpoint_type": "public",
+        "users": [
+            {
+                "username": "rally-demo@pco.invalid",
+                "password": "password",
+                "user_domain_name": "pco",
+                "project_name": "amazing-rally-demo",
+                "project_domain_name": "pco"
+            }
+        ],
+        "https_insecure": false,
+        "https_cacert": ""
+    }
+}
 ```
 
-Next point rally at the existing openstack deployment. This can be done with an existing OpenStack RC file.
-Make sure the `OS_PROJECT_DOMAIN_NAME` is set in the RC file.
+Import json into rally:
 
-```
-$ . openrc admin admin
-$ rally deployment create --fromenv --name=existing
-```
+``` bash
+$ rally deployment create --filename /tmp/credentials.json --name=rally-demo1
++--------------------------------------+----------------------------+-------------+------------------+--------+
+| uuid                                 | created_at                 | name        | status           | active |
++--------------------------------------+----------------------------+-------------+------------------+--------+
+| cf11c5f6-0f07-40fe-90f7-8a3abf8be165 | 2022-03-29T09:29:31.472568 | rally-demo1 | deploy->finished |        |
++--------------------------------------+----------------------------+-------------+------------------+--------+
+Using deployment: cf11c5f6-0f07-40fe-90f7-8a3abf8be165
+~/.rally/openrc was updated
 
-Example OpenStack rc file for the gx-scs environment:
+HINTS:
 
-```
-export OS_AUTH_URL=https://api.gx-scs.sovereignit.cloud:5000
-export OS_PROJECT_ID=<os_project_id>
-export OS_PROJECT_NAME=<os_project_name>
-export OS_USER_DOMAIN_NAME="keycloak"
-export OS_PROJECT_DOMAIN_ID=<os_project_domain_id>
-export OS_REGION_NAME="RegionOne"
-export OS_INTERFACE=public
-export OS_IDENTITY_API_VERSION=3
-export OS_PROJECT_DOMAIN_NAME='keycloak'
+* To use standard OpenStack clients, set up your env by running:
+        source ~/.rally/openrc
+  OpenStack clients are now configured, e.g run:
+        openstack image list
 ```
 
 You can check everything works:
 
-```
+``` bash
 $ rally deployment check
 
 --------------------------------------------------------------------------------
@@ -65,3 +86,33 @@ Available services:
 +-------------+-----------------+-----------+
 ```
 
+## rally vs openstack-rally vs xrally vs xrally-openstack
+
+*Summary*
+
+-   Opendev and Github repo are mirros of each other. Same number of
+    commits.
+-   Xrally are built containers based on the Dockerfile in rally
+    projects.
+-   Xrally Github projects are just garbage
+
+### Rally projects
+
+| Project         | Link                                          | Mirror                                        | Description                                                    |
+|-----------------|-----------------------------------------------|-----------------------------------------------|----------------------------------------------------------------|
+| Openstack Rally | https://opendev.org/openstack/rally           | https://github.com/openstack/rally            | Rally project with origin Dockerfile / without rally_openstack |
+| Openstack Rally | https://opendev.org/openstack/rally-openstack | https://github.com/openstack/rally-openstack/ | Rally project with xrally Dockerfile / with rally_openstack    |
+
+### Docker container
+
+| Container               | Source                                       |
+|-------------------------|----------------------------------------------|
+| xrally/xrally-openstack | https://github.com/openstack/rally-openstack |
+| xrally/xrally           | https://github.com/openstack/rally           |
+
+### Garbage
+
+| Link                                       |
+|--------------------------------------------|
+| https://github.com/xrally/xrally-openstack |
+| https://github.com/xrally/xrally           |
